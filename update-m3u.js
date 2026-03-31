@@ -21,19 +21,20 @@ async function updatePovijestM3U() {
 
     await new Promise(r => setTimeout(r, 4000));
 
-    // 🎯 JSON izvlačenje + MP3 (bez traženja slike)
-    const result = await page.evaluate(() => {
-      // 1. NAZIV IZ JSON-a: lastAvailableEpisode.caption
-      let episodeTitle = null;
-      const scripts = Array.from(document.querySelectorAll('script'));
-      for (const script of scripts) {
-        const content = script.textContent || script.innerHTML;
-        const jsonMatch = content.match(/lastAvailableEpisode[^}]*"caption"\\s*:\\s*"([^"]+)"/);
-        if (jsonMatch) {
-          episodeTitle = jsonMatch[1];
-          break;
-        }
-      }
+   // 🎯 JSON izvlačenje + MP3
+const result = await page.evaluate(() => {
+  // 1. NAZIV IZ JSON-a: lastAvailableEpisode.caption
+  let episodeTitle = null;
+  const scripts = Array.from(document.querySelectorAll('script'));
+  for (const script of scripts) {
+    const content = script.textContent || script.innerHTML;
+    // ✅ JSON regex za caption
+    const jsonMatch = content.match(/lastAvailableEpisode[^}]*"caption"\s*:\s*"([^"]+)"/);
+    if (jsonMatch) {
+      episodeTitle = jsonMatch[1];
+      break;
+    }
+  }
 
       const allLinks = Array.from(document.querySelectorAll('a[href], script, img'));
 
